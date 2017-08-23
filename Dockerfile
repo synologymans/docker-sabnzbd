@@ -8,13 +8,15 @@ RUN apt-get update && \
     add-apt-repository -y ppa:jcfp/ppa && \
     add-apt-repository -y ppa:mosquitto-dev/mosquitto-ppa && \
     apt-get update && \
-    apt-get install -y sabnzbdplus && \ 
+    apt-get install -y sabnzbdplus locales && \ 
     #apt-get install -y sabnzbdplus-theme-classic sabnzbdplus-theme-mobile sabnzbdplus-theme-plush \ &&
-    apt-get install -y par2 python-yenc unzip rar mosquitto-clients && \
+    apt-get install -y par2 python-yenc python-pip unzip rar mosquitto-clients && \
     apt-get -y autoremove && \
     apt-get -y clean
 
-
+RUN echo 149 | dpkg-reconfigure locales
+RUN echo "LANG=en_US.utf8" >> /etc/default/locale
+RUN pip install sabyenc --upgrade
 RUN mkdir -p /config && \
     mkdir -p /data
 
@@ -23,6 +25,7 @@ EXPOSE 8080 9090
 VOLUME ["/config"]
 VOLUME ["/data"]
 
+ENV LANG=en_US.UTF-8
 
 ENTRYPOINT ["/usr/bin/sabnzbdplus"]
 CMD ["--config-file","/config","--server",":8080","--console"]
